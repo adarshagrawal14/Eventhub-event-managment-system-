@@ -20,10 +20,22 @@ const jwtSecret = "bsbsfbrnsftentwnnwnwn";
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.json());
 app.use(cookieParser());
+const allowedOrigins = [
+   "http://localhost:5173",
+   "http://localhost:3000",
+   process.env.FRONTEND_URL || "https://your-domain.vercel.app"
+];
+
 app.use(
    cors({
       credentials: true,
-      origin: "http://localhost:5173",
+      origin: (origin, callback) => {
+         if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+         } else {
+            callback(new Error("Not allowed by CORS"));
+         }
+      },
    })
 );
 
